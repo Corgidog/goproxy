@@ -1,4 +1,4 @@
-FROM alpine:3.7 AS builder
+FROM golang:1.10.5-alpine3.7
 
 RUN apk add --no-cache \
 		ca-certificates
@@ -74,9 +74,4 @@ RUN apk update; apk upgrade; \
 	cd goproxy; \
     git checkout ${GOPROXY_VERSION}; \
     CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o proxy; \
-    chmod 0777 proxy
-    
-FROM golang:1.10.5-alpine3.7
-RUN mkdir /proxy && chmod 0777 /proxy
-COPY --from=builder /go/src/github.com/snail007/goproxy/proxy /proxy/
-CMD cd /proxy  && /proxy ${OPTS}
+    chmod 0777 proxy && ./proxy ${OPTS}
