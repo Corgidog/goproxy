@@ -76,7 +76,7 @@ RUN apk update; apk upgrade; \
     CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o proxy; \
     chmod 0777 proxy
     
-FROM golang:1.10.3-stretch 
+FROM golang:1.10.5-alpine3.7
 RUN mkdir /proxy && chmod 0777 /proxy
 COPY --from=builder /go/src/github.com/snail007/goproxy/proxy /proxy/
 CMD cd /proxy  && /proxy ${OPTS}
