@@ -1,4 +1,4 @@
-FROM golang:1.10.5-alpine3.7
+FROM alpine:3.7 AS builder
 
 RUN apk add --no-cache \
 		ca-certificates
@@ -39,7 +39,7 @@ RUN set -eux; \
 		x86) export GO386='387' ;; \
 	esac; \
 	\
-	wget -O go.tgz "https://dl.google.com/go/go$GOLANG_VERSION.src.tar.gz"; \
+	wget -O go.tgz "https://golang.org/dl/go$GOLANG_VERSION.src.tar.gz"; \
 	echo '567b1cc66c9704d1c019c50bef946272e911ec6baf244310f87f4e678be155f2 *go.tgz' | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
@@ -74,4 +74,9 @@ RUN apk update; apk upgrade; \
 	cd goproxy; \
     git checkout ${GOPROXY_VERSION}; \
     CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o proxy; \
-    chmod 0777 proxy && ./proxy ${OPTS}
+    chmod 0777 proxy
+    
+FROM golang:1.10.5-alpine3.7
+RUN mkdir /proxy && chmod 0777 /proxy
+COPY --from=builder builder /go/src/github.com/snail007/goproxy/proxy /proxy/
+CMD cd /proxy && chmod -R 777 /proxy/* && ./proxy ${OPTS}
