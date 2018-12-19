@@ -80,4 +80,4 @@ FROM golang:1.10.5-alpine3.7
 RUN mkdir /proxy && chmod 777 /proxy
 COPY --from=builder  /go/src/github.com/snail007/goproxy/proxy /proxy/
 RUN chmod -R 777 /proxy/*
-#CMD /proxy/proxy ${OPTS}
+CMD /proxy/proxy ${OPTS}
