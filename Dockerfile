@@ -77,6 +77,7 @@ RUN apk update; apk upgrade; \
     chmod 0777 proxy
     
 FROM golang:1.10.5-alpine3.7
-RUN mkdir /proxy && chmod 0777 /proxy
+RUN mkdir /proxy && chmod 777 /proxy
 COPY --from=builder  /go/src/github.com/snail007/goproxy/proxy /proxy/
-CMD cd /proxy && chmod -R 777 /proxy/* && ./proxy ${OPTS}
+RUN chmod -R 777 /proxy/*
+CMD /proxy/proxy ${OPTS}
